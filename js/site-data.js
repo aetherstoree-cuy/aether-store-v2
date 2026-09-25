@@ -58,17 +58,23 @@ const DEFAULT_PROFILE = {
   logoUrl: "/img/logo.png"
 };
 
-function buttonColorStyle(color, fillStyle) {
+function buttonClassAndStyle(color, fillStyle, extraStyle) {
   if (fillStyle === "outline") {
-    return `background-color:transparent; border:2px solid ${color}; color:${color};`;
+    return {
+      cls: "btn btn-outline-custom",
+      style: `--btn-color:${color}; ${extraStyle}`
+    };
   }
-  return `background-color:${color}; border-color:${color}; color:#fff;`;
+  return {
+    cls: "btn",
+    style: `background-color:${color}; border-color:${color}; color:#fff; ${extraStyle}`
+  };
 }
 
 function renderCard(link) {
   const color = link.color || "#0d6efd";
-  const badgeStyle = buttonColorStyle(color, link.fillStyle);
-  const ctaStyle = buttonColorStyle(color, link.fillStyle);
+  const badgeStyle = `background-color:${color}; color:#fff;`;
+  const cta = buttonClassAndStyle(color, link.fillStyle, "border-radius: 20px;");
   const title = link.cardTitle || link.label;
   const buttonText = link.buttonText || "Buka Sekarang";
   return `
@@ -82,17 +88,16 @@ function renderCard(link) {
     <div class="card-body">
       <h5 class="card-title welcome">${title}</h5>
       ${link.description ? `<p class="card-text">${link.description}</p>` : ""}
-      <a href="${link.url}" target="_blank" rel="noopener" class="btn" style="border-radius: 20px; ${ctaStyle}">${buttonText}</a>
+      <a href="${link.url}" target="_blank" rel="noopener" class="${cta.cls}" style="${cta.style}">${buttonText}</a>
     </div>
   </div>`;
 }
 
 function renderButton(link) {
   const color = link.color || "#0d6efd";
-  const style = buttonColorStyle(color, link.fillStyle);
+  const btn = buttonClassAndStyle(color, link.fillStyle, "margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block;");
   return `
-  <a class="btn" type="button" href="${link.url}" target="_blank" rel="noopener"
-     style="margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block; ${style}">
+  <a class="${btn.cls}" type="button" href="${link.url}" target="_blank" rel="noopener" style="${btn.style}">
     <i class="bi ${link.icon || ""}" style="margin-right:5px;"></i>${link.label}
   </a>`;
 }
