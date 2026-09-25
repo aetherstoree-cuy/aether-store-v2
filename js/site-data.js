@@ -51,7 +51,8 @@ const DEFAULT_LINKS = [
 
 const DEFAULT_PROFILE = {
   welcomeText: 'WELCOME TO LINK BIO <span style="color:#3bb2f6">AETHER STORE</span>',
-  bannerImages: ["img/banner.jpg"]
+  bannerImages: ["img/banner.jpg"],
+  logoUrl: "/img/logo.png"
 };
 
 function renderCard(link) {
@@ -104,6 +105,12 @@ async function loadSiteContent() {
   }
 
   if (welcomeEl) welcomeEl.innerHTML = profile.welcomeText || DEFAULT_PROFILE.welcomeText;
+
+  const logoUrl = profile.logoUrl || DEFAULT_PROFILE.logoUrl;
+  const navbarLogo = document.getElementById("navbarLogo");
+  const footerLogo = document.getElementById("footerLogo");
+  if (navbarLogo) navbarLogo.src = logoUrl;
+  if (footerLogo) footerLogo.src = logoUrl;
 
   // Dukung data lama (bannerImage tunggal) maupun baru (bannerImages array)
   let bannerImages = profile.bannerImages;
