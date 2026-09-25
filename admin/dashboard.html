@@ -57,67 +57,100 @@
 
   <!-- DAFTAR LINK -->
   <div class="panel">
-    <h2><i class="bi bi-link-45deg"></i> Daftar Link</h2>
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <h2 class="mb-0"><i class="bi bi-link-45deg"></i> Daftar Link</h2>
+      <button type="button" class="btn btn-primary btn-sm" id="addLinkBtn" style="border-radius:8px;">
+        <i class="bi bi-plus-circle"></i> Tambah Link
+      </button>
+    </div>
     <div id="linksList">Memuat...</div>
   </div>
 
-  <!-- TAMBAH / EDIT LINK -->
-  <div class="panel">
-    <h2 id="formTitle"><i class="bi bi-plus-circle"></i> Tambah Link Baru</h2>
-    <form id="linkForm">
-      <input type="hidden" id="linkId">
-      <div class="row g-2">
-        <div class="col-md-6">
-          <label class="form-label">Kategori</label>
-          <select class="form-select" id="linkCategorySelect">
-            <option value="">— Pilih kategori —</option>
-            <option value="__new__">+ Tambah kategori baru...</option>
-          </select>
-          <input type="text" class="form-control mt-2" id="linkCategoryNew" placeholder="Nama kategori baru, contoh: WhatsApp Admin" style="display:none;">
+  <!-- MODAL TAMBAH / EDIT LINK -->
+  <div class="modal fade" id="linkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background:#2a2a2a; color:#fff; border:1px solid #444; border-radius:15px;">
+        <div class="modal-header" style="border-color:#444;">
+          <h5 class="modal-title" id="formTitle"><i class="bi bi-plus-circle"></i> Tambah Link Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">Tipe Tampilan</label>
-          <select class="form-select" id="linkType">
-            <option value="button">Tombol biasa</option>
-            <option value="card">Kartu (dengan deskripsi & gambar)</option>
-          </select>
+        <div class="modal-body">
+          <form id="linkForm">
+            <input type="hidden" id="linkId">
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Kategori</label>
+                <select class="form-select" id="linkCategorySelect">
+                  <option value="">— Pilih kategori —</option>
+                  <option value="__new__">+ Tambah kategori baru...</option>
+                </select>
+                <input type="text" class="form-control mt-2" id="linkCategoryNew" placeholder="Nama kategori baru, contoh: WhatsApp Admin" style="display:none;">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tipe Tampilan</label>
+                <select class="form-select" id="linkType">
+                  <option value="button">Tombol biasa</option>
+                  <option value="card">Kartu (dengan deskripsi & gambar)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Label / Judul</label>
+                <input type="text" class="form-control" id="linkLabel" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">URL Tujuan</label>
+                <input type="url" class="form-control" id="linkUrl" required placeholder="https://...">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Icon (nama Bootstrap Icons, contoh: bi-whatsapp)</label>
+                <input type="text" class="form-control" id="linkIcon" placeholder="bi-whatsapp">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Warna Tombol (kode HEX, contoh: #25D366)</label>
+                <div class="d-flex gap-2">
+                  <input type="color" class="form-control form-control-color" id="linkColorPicker" value="#0d6efd" style="width:3rem; padding:.2rem;">
+                  <input type="text" class="form-control" id="linkColor" value="#0d6efd" placeholder="#0d6efd">
+                </div>
+              </div>
+              <div class="col-12" id="cardExtraFields" style="display:none;">
+                <label class="form-label">Deskripsi (khusus tipe Kartu)</label>
+                <textarea class="form-control mb-2" id="linkDescription" rows="2"></textarea>
+                <label class="form-label">URL Gambar Kartu (khusus tipe Kartu, upload dulu ke imgBB/Imgur)</label>
+                <input type="url" class="form-control" id="linkImageUrl" placeholder="https://...">
+                <img id="linkImagePreview" src="">
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">Label / Judul</label>
-          <input type="text" class="form-control" id="linkLabel" required>
+        <div class="modal-footer" style="border-color:#444;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Batal</button>
+          <button type="submit" form="linkForm" class="btn btn-primary" style="border-radius:10px;">Simpan Link</button>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">URL Tujuan</label>
-          <input type="url" class="form-control" id="linkUrl" required placeholder="https://...">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Icon (nama Bootstrap Icons, contoh: bi-whatsapp)</label>
-          <input type="text" class="form-control" id="linkIcon" placeholder="bi-whatsapp">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Warna Tombol (kode HEX, contoh: #25D366)</label>
-          <div class="d-flex gap-2">
-            <input type="color" class="form-control form-control-color" id="linkColorPicker" value="#0d6efd" style="width:3rem; padding:.2rem;">
-            <input type="text" class="form-control" id="linkColor" value="#0d6efd" placeholder="#0d6efd">
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KONFIRMASI HAPUS -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background:#2a2a2a; color:#fff; border:1px solid #444; border-radius:15px;">
+        <div class="modal-body text-center py-4">
+          <div class="alert alert-danger d-flex flex-column align-items-center gap-2 mb-0" role="alert">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size:2rem;"></i>
+            <span>Yakin ingin menghapus link ini? Tindakan ini tidak bisa dibatalkan.</span>
           </div>
         </div>
-        <div class="col-12" id="cardExtraFields" style="display:none;">
-          <label class="form-label">Deskripsi (khusus tipe Kartu)</label>
-          <textarea class="form-control mb-2" id="linkDescription" rows="2"></textarea>
-          <label class="form-label">URL Gambar Kartu (khusus tipe Kartu, upload dulu ke imgBB/Imgur)</label>
-          <input type="url" class="form-control" id="linkImageUrl" placeholder="https://...">
-          <img id="linkImagePreview" src="">
+        <div class="modal-footer justify-content-center" style="border-color:#444;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Batal</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn" style="border-radius:10px;">Ya, Hapus</button>
         </div>
       </div>
-      <div class="mt-3">
-        <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan Link</button>
-        <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="border-radius:10px; display:none;">Batal Edit</button>
-      </div>
-    </form>
+    </div>
   </div>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
@@ -174,6 +207,26 @@ document.getElementById("profileForm").addEventListener("submit", async (e) => {
 });
 
 // ---- LINKS ----
+const linkModal = new bootstrap.Modal(document.getElementById("linkModal"));
+const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+let pendingDeleteId = null;
+
+document.getElementById("addLinkBtn").addEventListener("click", () => {
+  resetLinkForm();
+  linkModal.show();
+});
+
+document.getElementById("linkModal").addEventListener("hidden.bs.modal", resetLinkForm);
+
+document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+  if (pendingDeleteId) {
+    await db.collection("links").doc(pendingDeleteId).delete();
+    pendingDeleteId = null;
+    deleteModal.hide();
+    loadLinks();
+  }
+});
+
 function populateCategoryDropdown(categories, selected) {
   const select = document.getElementById("linkCategorySelect");
   select.innerHTML = '<option value="">— Pilih kategori —</option>';
@@ -304,11 +357,8 @@ function editLink(id, link) {
   }
   toggleCardFields();
   document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square"></i> Edit Link';
-  document.getElementById("cancelEditBtn").style.display = "inline-block";
-  document.getElementById("linkForm").scrollIntoView({ behavior: "smooth" });
+  linkModal.show();
 }
-
-document.getElementById("cancelEditBtn").addEventListener("click", resetLinkForm);
 
 function resetLinkForm() {
   document.getElementById("linkForm").reset();
@@ -319,7 +369,6 @@ function resetLinkForm() {
   populateCategoryDropdown(existingCategories, "");
   document.getElementById("linkImagePreview").style.display = "none";
   document.getElementById("formTitle").innerHTML = '<i class="bi bi-plus-circle"></i> Tambah Link Baru';
-  document.getElementById("cancelEditBtn").style.display = "none";
   toggleCardFields();
 }
 
@@ -370,14 +419,13 @@ document.getElementById("linkForm").addEventListener("submit", async (e) => {
   }
 
   resetLinkForm();
+  linkModal.hide();
   loadLinks();
 });
 
-async function deleteLink(id) {
-  if (confirm("Yakin ingin menghapus link ini?")) {
-    await db.collection("links").doc(id).delete();
-    loadLinks();
-  }
+function deleteLink(id) {
+  pendingDeleteId = id;
+  deleteModal.show();
 }
 </script>
 </body>
