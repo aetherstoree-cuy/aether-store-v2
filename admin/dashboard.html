@@ -23,6 +23,10 @@
   .badge-cat { background:#3bb2f6; color:#111;}
   #bannerPreview, #linkImagePreview { max-width:100%; border-radius:10px; margin-top:.5rem; display:none;}
   #linkImagePreview { max-width:200px; }
+  .nav-tabs { border-bottom:1px solid #444; }
+  .nav-tabs .nav-link { color:#ccc; border:none; border-bottom:3px solid transparent; background:transparent; }
+  .nav-tabs .nav-link.active { color:#3bb2f6; background:transparent; border-bottom:3px solid #3bb2f6; }
+  .nav-tabs .nav-link:hover { color:#3bb2f6; border-color:transparent; }
 </style>
 </head>
 <body>
@@ -36,6 +40,27 @@
 </div>
 
 <div class="container-admin">
+
+  <ul class="nav nav-tabs mb-3" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-home" type="button" role="tab">
+        <i class="bi bi-house-door"></i> Halaman Utama
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-privacy" type="button" role="tab">
+        <i class="bi bi-shield-lock"></i> Privacy Policy
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-terms" type="button" role="tab">
+        <i class="bi bi-file-earmark-text"></i> Terms & Conditions
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+  <div class="tab-pane fade show active" id="tab-home" role="tabpanel">
 
   <!-- PROFIL -->
   <div class="panel">
@@ -72,6 +97,58 @@
     </div>
     <div id="linksList">Memuat...</div>
   </div>
+
+  </div><!-- /tab-home -->
+
+  <div class="tab-pane fade" id="tab-privacy" role="tabpanel">
+    <div class="panel">
+      <h2><i class="bi bi-shield-lock"></i> Halaman Privacy Policy</h2>
+      <form id="privacyForm">
+        <div class="row g-2 mb-2">
+          <div class="col-md-4">
+            <label class="form-label">Icon (Bootstrap Icons, contoh: bi-shield-lock)</label>
+            <input type="text" class="form-control" id="privacyIcon" placeholder="bi-shield-lock">
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Judul Halaman</label>
+            <input type="text" class="form-control" id="privacyTitle" placeholder="PRIVACY POLICY">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Isi Halaman (boleh pakai HTML dasar: &lt;p&gt;, &lt;b&gt;, &lt;br&gt;, &lt;ul&gt;&lt;li&gt;)</label>
+          <textarea class="form-control" id="privacyContent" rows="14" style="font-family:monospace; font-size:.85rem;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan Privacy Policy</button>
+        <span id="privacySaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
+      </form>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="tab-terms" role="tabpanel">
+    <div class="panel">
+      <h2><i class="bi bi-file-earmark-text"></i> Halaman Terms & Conditions</h2>
+      <form id="termsForm">
+        <div class="row g-2 mb-2">
+          <div class="col-md-4">
+            <label class="form-label">Icon (Bootstrap Icons, contoh: bi-file-earmark-text)</label>
+            <input type="text" class="form-control" id="termsIcon" placeholder="bi-file-earmark-text">
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Judul Halaman</label>
+            <input type="text" class="form-control" id="termsTitle" placeholder="TERMS & CONDITIONS">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Isi Halaman (boleh pakai HTML dasar: &lt;p&gt;, &lt;b&gt;, &lt;br&gt;, &lt;ul&gt;&lt;li&gt;)</label>
+          <textarea class="form-control" id="termsContent" rows="18" style="font-family:monospace; font-size:.85rem;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan Terms & Conditions</button>
+        <span id="termsSaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
+      </form>
+    </div>
+  </div>
+
+  </div><!-- /tab-content -->
 
   <!-- MODAL TAMBAH / EDIT LINK -->
   <div class="modal fade" id="linkModal" tabindex="-1" aria-hidden="true">
@@ -169,6 +246,8 @@ auth.onAuthStateChanged((user) => {
   } else {
     loadProfile();
     loadLinks();
+    loadLegalPageForm("privacy", "privacyIcon", "privacyTitle", "privacyContent");
+    loadLegalPageForm("terms", "termsIcon", "termsTitle", "termsContent");
   }
 });
 
@@ -483,6 +562,89 @@ function deleteLink(id) {
   pendingDeleteId = id;
   deleteModal.show();
 }
+
+// ---- HALAMAN LEGAL (PRIVACY POLICY & TERMS & CONDITIONS) ----
+const DEFAULT_PRIVACY_CONTENT = `<p><b style="color:#3bb2f6;">Aether Store</b> berkomitmen untuk melindungi dan menghargai privasi informasi pribadi Anda. Dokumen ini menjelaskan bagaimana kami mengumpulkan dan menggunakan data Anda.</p>
+
+<p><b>1. Informasi yang Kami Kumpulkan</b><br>
+Kami mengumpulkan informasi yang Anda berikan saat melakukan transaksi, termasuk namun tidak terbatas pada nomor WhatsApp atau Email, data game (ID Game, Server, atau Username/Password sementara khusus layanan joki), serta bukti transfer pembayaran.</p>
+
+<p><b>2. Penggunaan Informasi</b><br>
+Informasi Anda hanya digunakan untuk memproses pesanan Top Up, Skin, atau Joki Game.</p>
+
+<p><b>3. Keamanan Data</b><br>
+Kami menjaga kerahasiaan data akun Anda dengan ketat. Khusus untuk layanan Joki Game, data login Anda akan langsung dihapus setelah proses joki dinyatakan selesai. Kami tidak akan pernah menjual atau membagikan data pribadi Anda kepada pihak ketiga tanpa izin.</p>`;
+
+const DEFAULT_TERMS_CONTENT = `<p>Selamat datang di <b style="color:#3bb2f6;">Aether Store</b>. Dengan melakukan transaksi di kami, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan di bawah ini.</p>
+
+<p><b>1. Layanan Kami</b></p>
+<ul>
+<li>Aether Store menyediakan layanan produk digital berupa Top Up Game, Skin Game, Joki Game, dan lainnya.</li>
+<li>Seluruh transaksi diproses secara digital. Tidak ada pengiriman barang fisik ke alamat pembeli.</li>
+</ul>
+
+<p><b>2. Pembayaran</b></p>
+<ul>
+<li>Kami menerima berbagai metode pembayaran resmi yang tersedia di Indonesia (Transfer Bank, E-Wallet, QRIS, Alfamart/Indomaret, dll.).</li>
+<li>Pembeli wajib memastikan nominal dan nomor tujuan pembayaran sudah benar sebelum melakukan pembayaran.</li>
+</ul>
+
+<p><b>3. Kebijakan Pengembalian Dana (Refund)</b></p>
+<ul>
+<li>Semua pembelian bersifat final. Pesanan yang telah berhasil diproses sesuai data yang Anda masukkan tidak dapat dibatalkan atau di-refund.</li>
+<li>Refund atau pengembalian dana hanya akan dilakukan apabila: (1) Adanya kesalahan dari pihak Admin kami, (2) Terjadi gangguan atau error yang menyebabkan pesanan tidak dapat diselesaikan.</li>
+</ul>
+
+<p><b>4. Tanggung Jawab Pengguna</b></p>
+<ul>
+<li>Kesalahan mengirimkan data (seperti ID Game, Server, atau data lainnya) oleh pembeli sepenuhnya menjadi tanggung jawab pembeli.</li>
+<li>Untuk layanan Joki Game, pembeli wajib mengamankan akun terlebih dahulu dan mengganti kata sandi setelah proses joki selesai demi keamanan.</li>
+</ul>`;
+
+async function loadLegalPageForm(pageId, iconFieldId, titleFieldId, contentFieldId) {
+  const defaults = pageId === "privacy"
+    ? { icon: "bi-shield-lock", title: "PRIVACY POLICY", contentHtml: DEFAULT_PRIVACY_CONTENT }
+    : { icon: "bi-file-earmark-text", title: "TERMS & CONDITIONS", contentHtml: DEFAULT_TERMS_CONTENT };
+
+  const doc = await db.collection("legalPages").doc(pageId).get();
+  const data = doc.exists ? doc.data() : {};
+  document.getElementById(iconFieldId).value = data.icon || defaults.icon;
+  document.getElementById(titleFieldId).value = data.title || defaults.title;
+  document.getElementById(contentFieldId).value = data.contentHtml || defaults.contentHtml;
+}
+
+function showSavedBadge(id) {
+  const el = document.getElementById(id);
+  el.style.display = "inline";
+  setTimeout(() => (el.style.display = "none"), 2000);
+}
+
+document.getElementById("privacyForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await db.collection("legalPages").doc("privacy").set(
+    {
+      icon: document.getElementById("privacyIcon").value,
+      title: document.getElementById("privacyTitle").value,
+      contentHtml: document.getElementById("privacyContent").value
+    },
+    { merge: true }
+  );
+  showSavedBadge("privacySaved");
+});
+
+document.getElementById("termsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await db.collection("legalPages").doc("terms").set(
+    {
+      icon: document.getElementById("termsIcon").value,
+      title: document.getElementById("termsTitle").value,
+      contentHtml: document.getElementById("termsContent").value
+    },
+    { merge: true }
+  );
+  showSavedBadge("termsSaved");
+});
+
 </script>
 </body>
 </html>
