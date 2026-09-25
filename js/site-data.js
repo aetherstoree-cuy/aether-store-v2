@@ -4,7 +4,10 @@ const DEFAULT_LINKS = [
     category: "Discord",
     type: "card",
     icon: "bi-discord",
-    label: "Join Discord Aether Store",
+    label: "Discord",
+    cardTitle: "Join Discord Aether Store",
+    buttonText: "Buka Sekarang",
+    fillStyle: "fill",
     url: "https://discord.gg/pPPgHdVt45",
     color: "#0dcaf0",
     description: "Server Discord Aether Store dibuat untuk memudahkan kalian melakukan Top Up dengan cepat dan praktis. Cek langsung berbagai pricelist game yang tersedia di dalam server tanpa perlu chat Admin terlebih dahulu.",
@@ -55,29 +58,41 @@ const DEFAULT_PROFILE = {
   logoUrl: "/img/logo.png"
 };
 
+function buttonColorStyle(color, fillStyle) {
+  if (fillStyle === "outline") {
+    return `background-color:transparent; border:2px solid ${color}; color:${color};`;
+  }
+  return `background-color:${color}; border-color:${color}; color:#fff;`;
+}
+
 function renderCard(link) {
   const color = link.color || "#0d6efd";
+  const badgeStyle = buttonColorStyle(color, link.fillStyle);
+  const ctaStyle = buttonColorStyle(color, link.fillStyle);
+  const title = link.cardTitle || link.label;
+  const buttonText = link.buttonText || "Buka Sekarang";
   return `
   <div class="card" style="width: 90%; margin: 0 auto 15px auto; background-color: #393a3f; color: #F8F5F0; border: 1px solid #EEEDED; border-radius: 25px;">
-    ${link.image ? `<img src="${link.image}" class="card-img-top" alt="${link.label}" style="border-radius: 25px">` : ""}
+    ${link.image ? `<img src="${link.image}" class="card-img-top" alt="${title}" style="border-radius: 25px">` : ""}
     <div>
-      <span class="badge rounded-pill" style="margin-left: 12px; margin-top: 10px; background-color:${color}; color:#fff;">
+      <span class="badge rounded-pill" style="margin-left: 12px; margin-top: 10px; ${badgeStyle}">
         <i class="bi ${link.icon || ""}"></i> ${link.label}
       </span>
     </div>
     <div class="card-body">
-      <h5 class="card-title welcome">${link.label}</h5>
+      <h5 class="card-title welcome">${title}</h5>
       ${link.description ? `<p class="card-text">${link.description}</p>` : ""}
-      <a href="${link.url}" target="_blank" rel="noopener" class="btn" style="border-radius: 20px; background-color:${color}; border-color:${color}; color:#fff;">Buka Sekarang</a>
+      <a href="${link.url}" target="_blank" rel="noopener" class="btn" style="border-radius: 20px; ${ctaStyle}">${buttonText}</a>
     </div>
   </div>`;
 }
 
 function renderButton(link) {
   const color = link.color || "#0d6efd";
+  const style = buttonColorStyle(color, link.fillStyle);
   return `
   <a class="btn" type="button" href="${link.url}" target="_blank" rel="noopener"
-     style="margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block; background-color:${color}; border-color:${color}; color:#fff;">
+     style="margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block; ${style}">
     <i class="bi ${link.icon || ""}" style="margin-right:5px;"></i>${link.label}
   </a>`;
 }
@@ -159,6 +174,27 @@ async function loadSiteContent() {
   });
 
   container.innerHTML = html;
+
+  const loader = document.getElementById("pageLoader");
+  if (loader) {
+    loader.style.opacity = "0";
+    setTimeout(() => {
+      loader.style.display = "none";
+    }, 300);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", loadSiteContent);
+document.addEventListener("DOMContentLoaded", () => {
+  loadSiteContent();
+  // Jaring pengaman: kalau karena suatu hal loading kelamaan (koneksi lambat/error tak terduga),
+  // overlay tetap disembunyikan otomatis setelah 8 detik.
+  setTimeout(() => {
+    const loader = document.getElementById("pageLoader");
+    if (loader && loader.style.display !== "none") {
+      loader.style.opacity = "0";
+      setTimeout(() => {
+        loader.style.display = "none";
+      }, 300);
+    }
+  }, 8000);
+});
