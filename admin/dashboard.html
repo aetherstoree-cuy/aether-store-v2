@@ -46,9 +46,11 @@
         <textarea class="form-control" id="welcomeText" rows="2"></textarea>
       </div>
       <div class="mb-3">
-        <label class="form-label">URL Gambar Banner (upload dulu ke imgBB/Imgur, lalu tempel link-nya di sini)</label>
-        <input type="url" class="form-control" id="bannerUrl" placeholder="https://...">
-        <img id="bannerPreview" src="">
+        <label class="form-label">Gambar Banner (boleh lebih dari 1, otomatis jadi carousel/slide bergantian)</label>
+        <div id="bannerUrlList"></div>
+        <button type="button" class="btn btn-sm btn-outline-light mt-1" id="addBannerUrlBtn" style="border-radius:8px;">
+          <i class="bi bi-plus-circle"></i> Tambah Gambar Banner
+        </button>
       </div>
       <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan Profil</button>
       <span id="profileSaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
@@ -170,37 +172,68 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 });
 
 // ---- PROFIL ----
+let bannerImages = [];
+
+function renderBannerUrlList() {
+  const wrap = document.getElementById("bannerUrlList");
+  wrap.innerHTML = "";
+  if (!bannerImages.length) {
+    wrap.innerHTML = '<p class="text-muted mb-1">Belum ada gambar banner. Klik "Tambah Gambar Banner".</p>';
+    return;
+  }
+  bannerImages.forEach((url, i) => {
+    const row = document.createElement("div");
+    row.className = "d-flex gap-2 align-items-start mb-2";
+    row.innerHTML = `
+      <div class="flex-grow-1">
+        <input type="url" class="form-control banner-url-input" placeholder="https://..." value="${url || ""}">
+        ${url ? `<img src="${url}" style="max-width:100%; border-radius:8px; margin-top:.4rem;">` : ""}
+      </div>
+      <button type="button" class="btn btn-outline-danger btn-sm removeBannerBtn" title="Hapus"><i class="bi bi-trash"></i></button>`;
+    row.querySelector(".banner-url-input").addEventListener("input", (e) => {
+      bannerImages[i] = e.target.value;
+      renderBannerUrlList();
+    });
+    row.querySelector(".removeBannerBtn").addEventListener("click", () => {
+      bannerImages.splice(i, 1);
+      renderBannerUrlList();
+    });
+    wrap.appendChild(row);
+  });
+}
+
+document.getElementById("addBannerUrlBtn").addEventListener("click", () => {
+  bannerImages.push("");
+  renderBannerUrlList();
+});
+
 async function loadProfile() {
   const doc = await db.collection("site").doc("profile").get();
   if (doc.exists) {
     const data = doc.data();
     document.getElementById("welcomeText").value = data.welcomeText || "";
-    if (data.bannerImage) {
-      document.getElementById("bannerUrl").value = data.bannerImage;
-      const prev = document.getElementById("bannerPreview");
-      prev.src = data.bannerImage;
-      prev.style.display = "block";
-    }
-  }
-}
-
-document.getElementById("bannerUrl").addEventListener("input", (e) => {
-  const url = e.target.value;
-  const prev = document.getElementById("bannerPreview");
-  if (url) {
-    prev.src = url;
-    prev.style.display = "block";
+    bannerImages = data.bannerImages && data.bannerImages.length
+      ? [...data.bannerImages]
+      : data.bannerImage
+      ? [data.bannerImage]
+      : [];
   } else {
-    prev.style.display = "none";
+    bannerImages = [];
   }
-});
+  renderBannerUrlList();
+}
 
 document.getElementById("profileForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const welcomeText = document.getElementById("welcomeText").value;
-  const bannerImage = document.getElementById("bannerUrl").value;
+  const cleanedBanners = bannerImages.map((u) => u.trim()).filter(Boolean);
 
-  await db.collection("site").doc("profile").set({ welcomeText, bannerImage }, { merge: true });
+  await db.collection("site").doc("profile").set(
+    { welcomeText, bannerImages: cleanedBanners, bannerImage: firebase.firestore.FieldValue.delete() },
+    { merge: true }
+  );
+  bannerImages = cleanedBanners;
+  renderBannerUrlList();
   const saved = document.getElementById("profileSaved");
   saved.style.display = "inline";
   setTimeout(() => (saved.style.display = "none"), 2000);
