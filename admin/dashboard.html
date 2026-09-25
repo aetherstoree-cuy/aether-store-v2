@@ -42,6 +42,11 @@
     <h2><i class="bi bi-person-badge"></i> Profil Halaman</h2>
     <form id="profileForm">
       <div class="mb-3">
+        <label class="form-label">URL Logo (tampil di navbar & footer)</label>
+        <input type="url" class="form-control" id="logoUrl" placeholder="https://...">
+        <img id="logoPreview" src="" style="max-width:150px; border-radius:8px; margin-top:.5rem; display:none;">
+      </div>
+      <div class="mb-3">
         <label class="form-label">Teks Sambutan (boleh pakai HTML sederhana seperti &lt;span&gt;)</label>
         <textarea class="form-control" id="welcomeText" rows="2"></textarea>
       </div>
@@ -212,6 +217,12 @@ async function loadProfile() {
   if (doc.exists) {
     const data = doc.data();
     document.getElementById("welcomeText").value = data.welcomeText || "";
+    document.getElementById("logoUrl").value = data.logoUrl || "";
+    if (data.logoUrl) {
+      const logoPrev = document.getElementById("logoPreview");
+      logoPrev.src = data.logoUrl;
+      logoPrev.style.display = "block";
+    }
     bannerImages = data.bannerImages && data.bannerImages.length
       ? [...data.bannerImages]
       : data.bannerImage
@@ -223,13 +234,25 @@ async function loadProfile() {
   renderBannerUrlList();
 }
 
+document.getElementById("logoUrl").addEventListener("input", (e) => {
+  const url = e.target.value;
+  const prev = document.getElementById("logoPreview");
+  if (url) {
+    prev.src = url;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+});
+
 document.getElementById("profileForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const welcomeText = document.getElementById("welcomeText").value;
+  const logoUrl = document.getElementById("logoUrl").value;
   const cleanedBanners = bannerImages.map((u) => u.trim()).filter(Boolean);
 
   await db.collection("site").doc("profile").set(
-    { welcomeText, bannerImages: cleanedBanners, bannerImage: firebase.firestore.FieldValue.delete() },
+    { welcomeText, logoUrl, bannerImages: cleanedBanners, bannerImage: firebase.firestore.FieldValue.delete() },
     { merge: true }
   );
   bannerImages = cleanedBanners;
