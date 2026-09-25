@@ -9,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <style>
-  body { background:#3b3b3b; color:#fff; font-family:'Poppins',sans-serif; padding-bottom:60px; margin:0;}
+  body { background:#3b3b3b; color:#fff; font-family:'Poppins',sans-serif; padding-bottom:60px; margin:0; overflow-x:hidden;}
   .navbar-admin { background:#1f1f1f; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #3bb2f6; flex-wrap:wrap; gap:.5rem;}
   .navbar-admin h1 { font-family:'Lilita One',sans-serif; font-size:1.2rem; color:#3bb2f6; margin:0;}
   .container-admin { max-width:900px; margin:2rem auto; padding:0 1rem;}
@@ -19,7 +19,8 @@
   .form-control:focus, .form-select:focus { background:#1f1f1f; color:#fff; border-color:#3bb2f6; box-shadow:none;}
   .form-label { font-size:.9rem; color:#ccc;}
   .link-item { background:#1f1f1f; border:1px solid #444; border-radius:10px; padding:.8rem 1rem; margin-bottom:.6rem; display:flex; justify-content:space-between; align-items:center; gap:.5rem; flex-wrap:wrap;}
-  .link-item .info { font-size:.9rem;}
+  .link-item .info { font-size:.9rem; min-width:0; flex:1 1 260px; overflow-wrap:break-word; word-break:break-word;}
+  .link-item .info small { overflow-wrap:break-word; word-break:break-all; display:inline-block; max-width:100%;}
   .badge-cat { background:#3bb2f6; color:#111;}
   #bannerPreview, #linkImagePreview { max-width:100%; border-radius:10px; margin-top:.5rem; display:none;}
   #linkImagePreview { max-width:200px; }
@@ -178,7 +179,7 @@
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Label / Judul</label>
+                <label class="form-label">Label (teks tombol, atau teks kecil di badge kartu)</label>
                 <input type="text" class="form-control" id="linkLabel" required>
               </div>
               <div class="col-md-6">
@@ -190,15 +191,27 @@
                 <input type="text" class="form-control" id="linkIcon" placeholder="bi-whatsapp">
               </div>
               <div class="col-md-6">
-                <label class="form-label">Warna Tombol (kode HEX, contoh: #25D366)</label>
+                <label class="form-label">Gaya Tombol</label>
+                <select class="form-select" id="linkFillStyle">
+                  <option value="fill">Solid (warna penuh)</option>
+                  <option value="outline">Outline (garis saja)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Warna (kode HEX, contoh: #25D366)</label>
                 <div class="d-flex gap-2">
                   <input type="color" class="form-control form-control-color" id="linkColorPicker" value="#0d6efd" style="width:3rem; padding:.2rem;">
                   <input type="text" class="form-control" id="linkColor" value="#0d6efd" placeholder="#0d6efd">
                 </div>
               </div>
               <div class="col-12" id="cardExtraFields" style="display:none;">
+                <hr style="border-color:#444;">
+                <label class="form-label">Judul Card (headline besar yang tampil di kartu)</label>
+                <input type="text" class="form-control mb-2" id="linkCardTitle" placeholder="Contoh: Join Discord Aether Store">
                 <label class="form-label">Deskripsi (khusus tipe Kartu)</label>
                 <textarea class="form-control mb-2" id="linkDescription" rows="2"></textarea>
+                <label class="form-label">Teks Tombol CTA di Kartu</label>
+                <input type="text" class="form-control mb-2" id="linkButtonText" placeholder="Buka Sekarang">
                 <label class="form-label">URL Gambar Kartu (khusus tipe Kartu, upload dulu ke imgBB/Imgur)</label>
                 <input type="url" class="form-control" id="linkImageUrl" placeholder="https://...">
                 <img id="linkImagePreview" src="">
@@ -481,6 +494,9 @@ function editLink(id, link) {
   document.getElementById("linkIcon").value = link.icon || "";
   document.getElementById("linkColor").value = link.color || "#0d6efd";
   document.getElementById("linkColorPicker").value = link.color || "#0d6efd";
+  document.getElementById("linkFillStyle").value = link.fillStyle || "fill";
+  document.getElementById("linkCardTitle").value = link.cardTitle || "";
+  document.getElementById("linkButtonText").value = link.buttonText || "";
   document.getElementById("linkDescription").value = link.description || "";
   document.getElementById("linkImageUrl").value = link.image || "";
   const prev = document.getElementById("linkImagePreview");
@@ -541,6 +557,9 @@ document.getElementById("linkForm").addEventListener("submit", async (e) => {
     url: document.getElementById("linkUrl").value,
     icon: document.getElementById("linkIcon").value,
     color: document.getElementById("linkColor").value || "#0d6efd",
+    fillStyle: document.getElementById("linkFillStyle").value || "fill",
+    cardTitle: type === "card" ? document.getElementById("linkCardTitle").value : "",
+    buttonText: type === "card" ? document.getElementById("linkButtonText").value : "",
     description: type === "card" ? document.getElementById("linkDescription").value : "",
     image: type === "card" ? image : ""
   };
