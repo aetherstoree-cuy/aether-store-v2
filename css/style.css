@@ -1,0 +1,97 @@
+#myBtn {
+  display: none;
+  position: fixed; /* Fixed/sticky position */
+  bottom: 40px; /* Place the button at the bottom of the page */
+  right: 30px; /* Place the button 30px from the right */
+  z-index: 98; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: hwb(204 0% 0%); /* Set a background color */
+  color: black; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  padding: 3px; /* Some padding */
+  border-radius: 25px; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.4rem 7%;
+  border-bottom: 1px solid #1E90FF;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.coppy {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.coppy2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.welcome {
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.title {
+  font-family: "Mukta", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.isi {
+  font-family: "Sora", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+.bullet-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    margin: 0;
+}
+
+.bullet-text p {
+    margin: 0;
+}
+
+.bullet-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+.bullet-text span {
+    flex-shrink: 0;
+}
+
+.bullet-text p {
+    margin: 0;
+    padding: 0;
+}
+
+.peta {
+    color: inherit;
+    text-decoration: none;
+}
+
+.peta:hover {
+    color: #3bb2f6;
+    text-decoration: none;
+}
