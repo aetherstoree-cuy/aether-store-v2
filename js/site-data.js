@@ -51,7 +51,7 @@ const DEFAULT_LINKS = [
 
 const DEFAULT_PROFILE = {
   welcomeText: 'WELCOME TO LINK BIO <span style="color:#3bb2f6">AETHER STORE</span>',
-  bannerImage: "img/banner.jpg"
+  bannerImages: ["img/banner.jpg"]
 };
 
 function renderCard(link) {
@@ -84,7 +84,9 @@ function renderButton(link) {
 async function loadSiteContent() {
   const container = document.getElementById("linksRoot");
   const welcomeEl = document.getElementById("welcomeText");
-  const bannerEl = document.getElementById("bannerImg");
+  const carouselInner = document.getElementById("bannerCarouselInner");
+  const prevBtn = document.getElementById("bannerPrevBtn");
+  const nextBtn = document.getElementById("bannerNextBtn");
 
   let profile = DEFAULT_PROFILE;
   let links = DEFAULT_LINKS;
@@ -102,7 +104,26 @@ async function loadSiteContent() {
   }
 
   if (welcomeEl) welcomeEl.innerHTML = profile.welcomeText || DEFAULT_PROFILE.welcomeText;
-  if (bannerEl) bannerEl.src = profile.bannerImage || DEFAULT_PROFILE.bannerImage;
+
+  // Dukung data lama (bannerImage tunggal) maupun baru (bannerImages array)
+  let bannerImages = profile.bannerImages;
+  if (!bannerImages || !bannerImages.length) {
+    bannerImages = profile.bannerImage ? [profile.bannerImage] : DEFAULT_PROFILE.bannerImages;
+  }
+
+  if (carouselInner) {
+    carouselInner.innerHTML = bannerImages
+      .map(
+        (src, i) => `
+      <div class="carousel-item ${i === 0 ? "active" : ""}">
+        <img src="${src}" class="d-block w-100" alt="banner aether ${i + 1}">
+      </div>`
+      )
+      .join("");
+  }
+  const showControls = bannerImages.length > 1;
+  if (prevBtn) prevBtn.style.display = showControls ? "block" : "none";
+  if (nextBtn) nextBtn.style.display = showControls ? "block" : "none";
 
   // Kelompokkan link per kategori, urutan sesuai kemunculan pertama
   const categoryOrder = [];
