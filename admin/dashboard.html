@@ -68,8 +68,12 @@
       <input type="hidden" id="linkId">
       <div class="row g-2">
         <div class="col-md-6">
-          <label class="form-label">Kategori (contoh: WhatsApp Admin, Media Sosial)</label>
-          <input type="text" class="form-control" id="linkCategory" required>
+          <label class="form-label">Kategori</label>
+          <select class="form-select" id="linkCategorySelect">
+            <option value="">— Pilih kategori —</option>
+            <option value="__new__">+ Tambah kategori baru...</option>
+          </select>
+          <input type="text" class="form-control mt-2" id="linkCategoryNew" placeholder="Nama kategori baru, contoh: WhatsApp Admin" style="display:none;">
         </div>
         <div class="col-md-6">
           <label class="form-label">Tipe Tampilan</label>
@@ -91,14 +95,11 @@
           <input type="text" class="form-control" id="linkIcon" placeholder="bi-whatsapp">
         </div>
         <div class="col-md-6">
-          <label class="form-label">Warna Tombol</label>
-          <select class="form-select" id="linkStyle">
-            <option value="btn-primary">Biru (Primary)</option>
-            <option value="btn-outline-info">Outline Info</option>
-            <option value="btn-outline-warning">Outline Kuning</option>
-            <option value="btn-success">Hijau</option>
-            <option value="btn-danger">Merah</option>
-          </select>
+          <label class="form-label">Warna Tombol (kode HEX, contoh: #25D366)</label>
+          <div class="d-flex gap-2">
+            <input type="color" class="form-control form-control-color" id="linkColorPicker" value="#0d6efd" style="width:3rem; padding:.2rem;">
+            <input type="text" class="form-control" id="linkColor" value="#0d6efd" placeholder="#0d6efd">
+          </div>
         </div>
         <div class="col-12" id="cardExtraFields" style="display:none;">
           <label class="form-label">Deskripsi (khusus tipe Kartu)</label>
@@ -173,6 +174,54 @@ document.getElementById("profileForm").addEventListener("submit", async (e) => {
 });
 
 // ---- LINKS ----
+function populateCategoryDropdown(categories, selected) {
+  const select = document.getElementById("linkCategorySelect");
+  select.innerHTML = '<option value="">— Pilih kategori —</option>';
+  categories.forEach((cat) => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    select.appendChild(opt);
+  });
+  const newOpt = document.createElement("option");
+  newOpt.value = "__new__";
+  newOpt.textContent = "+ Tambah kategori baru...";
+  select.appendChild(newOpt);
+
+  const newInput = document.getElementById("linkCategoryNew");
+  if (selected && categories.includes(selected)) {
+    select.value = selected;
+    newInput.style.display = "none";
+  } else if (selected) {
+    select.value = "__new__";
+    newInput.value = selected;
+    newInput.style.display = "block";
+  } else {
+    select.value = categories.length ? "" : "__new__";
+    newInput.style.display = categories.length ? "none" : "block";
+  }
+}
+
+document.getElementById("linkCategorySelect").addEventListener("change", (e) => {
+  const newInput = document.getElementById("linkCategoryNew");
+  if (e.target.value === "__new__") {
+    newInput.style.display = "block";
+    newInput.value = "";
+    newInput.focus();
+  } else {
+    newInput.style.display = "none";
+  }
+});
+
+document.getElementById("linkColorPicker").addEventListener("input", (e) => {
+  document.getElementById("linkColor").value = e.target.value;
+});
+document.getElementById("linkColor").addEventListener("input", (e) => {
+  if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+    document.getElementById("linkColorPicker").value = e.target.value;
+  }
+});
+
 function toggleCardFields() {
   const isCard = document.getElementById("linkType").value === "card";
   document.getElementById("cardExtraFields").style.display = isCard ? "block" : "none";
@@ -184,38 +233,66 @@ async function loadLinks() {
   const snap = await db.collection("links").orderBy("order", "asc").get();
   if (snap.empty) {
     listEl.innerHTML = '<p class="text-muted">Belum ada link. Tambahkan lewat form di bawah.</p>';
+    populateCategoryDropdown([], "");
     return;
   }
   listEl.innerHTML = "";
-  snap.forEach((docSnap) => {
+  const docs = snap.docs;
+  const categories = [...new Set(docs.map((d) => d.data().category))].sort();
+  populateCategoryDropdown(categories, document.getElementById("linkId").value ? undefined : "");
+  docs.forEach((docSnap, index) => {
     const link = docSnap.data();
     const el = document.createElement("div");
     el.className = "link-item";
     el.innerHTML = `
       <div class="info">
         <span class="badge badge-cat">${link.category}</span>
+        <span style="display:inline-block; width:14px; height:14px; border-radius:3px; background:${link.color || "#0d6efd"}; vertical-align:middle; margin-right:4px;"></span>
         <i class="bi ${link.icon || ""}"></i>
-        <strong>${link.label}</strong> <span class="text">(${link.type})</span><br>
-        <small class="text">${link.url}</small>
+        <strong>${link.label}</strong> <span class="text-muted">(${link.type})</span><br>
+        <small class="text-muted">${link.url}</small>
       </div>
       <div>
+        <button class="btn btn-sm btn-outline-secondary me-1 upBtn" ${index === 0 ? "disabled" : ""} title="Naik"><i class="bi bi-arrow-up"></i></button>
+        <button class="btn btn-sm btn-outline-secondary me-1 downBtn" ${index === docs.length - 1 ? "disabled" : ""} title="Turun"><i class="bi bi-arrow-down"></i></button>
         <button class="btn btn-sm btn-outline-info me-1 editBtn">Edit</button>
         <button class="btn btn-sm btn-outline-danger deleteBtn">Hapus</button>
       </div>`;
+    el.querySelector(".upBtn").addEventListener("click", () => moveLink(docs, index, -1));
+    el.querySelector(".downBtn").addEventListener("click", () => moveLink(docs, index, 1));
     el.querySelector(".editBtn").addEventListener("click", () => editLink(docSnap.id, link));
     el.querySelector(".deleteBtn").addEventListener("click", () => deleteLink(docSnap.id));
     listEl.appendChild(el);
   });
 }
 
+async function moveLink(docs, index, direction) {
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= docs.length) return;
+
+  const current = docs[index];
+  const target = docs[targetIndex];
+  const currentOrder = current.data().order;
+  const targetOrder = target.data().order;
+
+  await db.collection("links").doc(current.id).update({ order: targetOrder });
+  await db.collection("links").doc(target.id).update({ order: currentOrder });
+
+  loadLinks();
+}
+
 function editLink(id, link) {
   document.getElementById("linkId").value = id;
-  document.getElementById("linkCategory").value = link.category || "";
+  const existingCategories = [...document.getElementById("linkCategorySelect").options]
+    .map((o) => o.value)
+    .filter((v) => v && v !== "__new__");
+  populateCategoryDropdown(existingCategories, link.category);
   document.getElementById("linkType").value = link.type || "button";
   document.getElementById("linkLabel").value = link.label || "";
   document.getElementById("linkUrl").value = link.url || "";
   document.getElementById("linkIcon").value = link.icon || "";
-  document.getElementById("linkStyle").value = link.style || "btn-primary";
+  document.getElementById("linkColor").value = link.color || "#0d6efd";
+  document.getElementById("linkColorPicker").value = link.color || "#0d6efd";
   document.getElementById("linkDescription").value = link.description || "";
   document.getElementById("linkImageUrl").value = link.image || "";
   const prev = document.getElementById("linkImagePreview");
@@ -236,6 +313,10 @@ document.getElementById("cancelEditBtn").addEventListener("click", resetLinkForm
 function resetLinkForm() {
   document.getElementById("linkForm").reset();
   document.getElementById("linkId").value = "";
+  const existingCategories = [...document.getElementById("linkCategorySelect").options]
+    .map((o) => o.value)
+    .filter((v) => v && v !== "__new__");
+  populateCategoryDropdown(existingCategories, "");
   document.getElementById("linkImagePreview").style.display = "none";
   document.getElementById("formTitle").innerHTML = '<i class="bi bi-plus-circle"></i> Tambah Link Baru';
   document.getElementById("cancelEditBtn").style.display = "none";
@@ -259,13 +340,23 @@ document.getElementById("linkForm").addEventListener("submit", async (e) => {
   const type = document.getElementById("linkType").value;
   const image = document.getElementById("linkImageUrl").value;
 
+  const categorySelectVal = document.getElementById("linkCategorySelect").value;
+  const category = categorySelectVal === "__new__"
+    ? document.getElementById("linkCategoryNew").value.trim()
+    : categorySelectVal;
+
+  if (!category) {
+    alert("Pilih kategori yang sudah ada, atau ketik nama kategori baru.");
+    return;
+  }
+
   const data = {
-    category: document.getElementById("linkCategory").value,
+    category,
     type,
     label: document.getElementById("linkLabel").value,
     url: document.getElementById("linkUrl").value,
     icon: document.getElementById("linkIcon").value,
-    style: document.getElementById("linkStyle").value,
+    color: document.getElementById("linkColor").value || "#0d6efd",
     description: type === "card" ? document.getElementById("linkDescription").value : "",
     image: type === "card" ? image : ""
   };
