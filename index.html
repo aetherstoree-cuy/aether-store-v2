@@ -20,10 +20,17 @@
         border: 2px solid var(--btn-color, #0d6efd);
         color: var(--btn-color, #0d6efd);
         transition: background-color .2s ease, color .2s ease;
+        -webkit-tap-highlight-color: transparent;
+        outline: none;
+        box-shadow: none !important;
       }
-      .btn-outline-custom:hover {
+      .btn-outline-custom:hover,
+      .btn-outline-custom:focus,
+      .btn-outline-custom:active {
         background-color: var(--btn-color, #0d6efd);
         color: #fff;
+        outline: none;
+        box-shadow: none !important;
       }
     </style>
   </head>
