@@ -6,7 +6,7 @@ const DEFAULT_LINKS = [
     icon: "bi-discord",
     label: "Join Discord Aether Store",
     url: "https://discord.gg/pPPgHdVt45",
-    style: "btn-outline-info",
+    color: "#0dcaf0",
     description: "Server Discord Aether Store dibuat untuk memudahkan kalian melakukan Top Up dengan cepat dan praktis. Cek langsung berbagai pricelist game yang tersedia di dalam server tanpa perlu chat Admin terlebih dahulu.",
     image: "img/discord1.jpg",
     order: 1
@@ -17,7 +17,7 @@ const DEFAULT_LINKS = [
     icon: "bi-whatsapp",
     label: "Admin 1",
     url: "https://wa.me/6283185954151",
-    style: "btn-primary",
+    color: "#0d6efd",
     order: 2
   },
   {
@@ -26,7 +26,7 @@ const DEFAULT_LINKS = [
     icon: "bi-whatsapp",
     label: "Channel WhatsApp",
     url: "https://whatsapp.com/channel/0029VaEwTaWGOj9wqBCiwC2v",
-    style: "btn-primary",
+    color: "#0d6efd",
     order: 3
   },
   {
@@ -35,7 +35,7 @@ const DEFAULT_LINKS = [
     icon: "bi-telegram",
     label: "Testimoni Top Up",
     url: "https://t.me/aetherstoreeeeeee",
-    style: "btn-primary",
+    color: "#0d6efd",
     order: 4
   },
   {
@@ -44,7 +44,7 @@ const DEFAULT_LINKS = [
     icon: "bi-instagram",
     label: "Instagram",
     url: "https://www.instagram.com/aethertopup?igsh=bTdqOTg2N3djcGpo",
-    style: "btn-outline-warning",
+    color: "#f0ad4e",
     order: 5
   }
 ];
@@ -55,26 +55,28 @@ const DEFAULT_PROFILE = {
 };
 
 function renderCard(link) {
+  const color = link.color || "#0d6efd";
   return `
   <div class="card" style="width: 90%; margin: 0 auto 15px auto; background-color: #393a3f; color: #F8F5F0; border: 1px solid #EEEDED; border-radius: 25px;">
     ${link.image ? `<img src="${link.image}" class="card-img-top" alt="${link.label}" style="border-radius: 25px">` : ""}
     <div>
-      <span class="badge rounded-pill text-bg-primary" style="margin-left: 12px; margin-top: 10px;">
+      <span class="badge rounded-pill" style="margin-left: 12px; margin-top: 10px; background-color:${color}; color:#fff;">
         <i class="bi ${link.icon || ""}"></i> ${link.label}
       </span>
     </div>
     <div class="card-body">
       <h5 class="card-title welcome">${link.label}</h5>
       ${link.description ? `<p class="card-text">${link.description}</p>` : ""}
-      <a href="${link.url}" target="_blank" rel="noopener" class="btn ${link.style || "btn-outline-info"}" style="border-radius: 20px">Buka Sekarang</a>
+      <a href="${link.url}" target="_blank" rel="noopener" class="btn" style="border-radius: 20px; background-color:${color}; border-color:${color}; color:#fff;">Buka Sekarang</a>
     </div>
   </div>`;
 }
 
 function renderButton(link) {
+  const color = link.color || "#0d6efd";
   return `
-  <a class="btn ${link.style || "btn-primary"}" type="button" href="${link.url}" target="_blank" rel="noopener"
-     style="margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block;">
+  <a class="btn" type="button" href="${link.url}" target="_blank" rel="noopener"
+     style="margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block; background-color:${color}; border-color:${color}; color:#fff;">
     <i class="bi ${link.icon || ""}" style="margin-right:5px;"></i>${link.label}
   </a>`;
 }
