@@ -53,11 +53,19 @@
 
 <!--COUROSEL-->
 <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel" style="margin-top: 80px; margin-left: 15px; margin-right: 15px">
-  <div class="carousel-inner" style="border-radius: 15px">
+  <div class="carousel-inner" id="bannerCarouselInner" style="border-radius: 15px">
     <div class="carousel-item active">
       <img id="bannerImg" src="img/banner.jpg" class="d-block w-100" alt="banner aether">
     </div>
   </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev" id="bannerPrevBtn" style="display:none;">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Sebelumnya</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next" id="bannerNextBtn" style="display:none;">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Berikutnya</span>
+  </button>
 </div>
 <!--COUROSEL END-->
 
