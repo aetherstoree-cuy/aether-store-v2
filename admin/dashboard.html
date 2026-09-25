@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/img/logo.png">
+<title>Dashboard Admin - Aether Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+  body { background:#3b3b3b; color:#fff; font-family:'Poppins',sans-serif; padding-bottom:60px; margin:0;}
+  .navbar-admin { background:#1f1f1f; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #3bb2f6; flex-wrap:wrap; gap:.5rem;}
+  .navbar-admin h1 { font-family:'Lilita One',sans-serif; font-size:1.2rem; color:#3bb2f6; margin:0;}
+  .container-admin { max-width:900px; margin:2rem auto; padding:0 1rem;}
+  .panel { background:#2a2a2a; border:1px solid #444; border-radius:15px; padding:1.5rem; margin-bottom:1.5rem;}
+  .panel h2 { font-size:1.1rem; color:#3bb2f6; margin-bottom:1rem;}
+  .form-control, .form-select { background:#1f1f1f; color:#fff; border:1px solid #444;}
+  .form-control:focus, .form-select:focus { background:#1f1f1f; color:#fff; border-color:#3bb2f6; box-shadow:none;}
+  .form-label { font-size:.9rem; color:#ccc;}
+  .link-item { background:#1f1f1f; border:1px solid #444; border-radius:10px; padding:.8rem 1rem; margin-bottom:.6rem; display:flex; justify-content:space-between; align-items:center; gap:.5rem; flex-wrap:wrap;}
+  .link-item .info { font-size:.9rem;}
+  .badge-cat { background:#3bb2f6; color:#111;}
+  #bannerPreview, #linkImagePreview { max-width:100%; border-radius:10px; margin-top:.5rem; display:none;}
+  #linkImagePreview { max-width:200px; }
+</style>
+</head>
+<body>
+
+<div class="navbar-admin">
+  <h1><i class="bi bi-speedometer2"></i> Dashboard Admin Aether Store</h1>
+  <div>
+    <a href="/" target="_blank" class="btn btn-outline-light btn-sm me-2" style="border-radius:8px;">Lihat Situs</a>
+    <button id="logoutBtn" class="btn btn-danger btn-sm" style="border-radius:8px;">Keluar</button>
+  </div>
+</div>
+
+<div class="container-admin">
+
+  <!-- PROFIL -->
+  <div class="panel">
+    <h2><i class="bi bi-person-badge"></i> Profil Halaman</h2>
+    <form id="profileForm">
+      <div class="mb-3">
+        <label class="form-label">Teks Sambutan (boleh pakai HTML sederhana seperti &lt;span&gt;)</label>
+        <textarea class="form-control" id="welcomeText" rows="2"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">URL Gambar Banner (upload dulu ke imgBB/Imgur, lalu tempel link-nya di sini)</label>
+        <input type="url" class="form-control" id="bannerUrl" placeholder="https://...">
+        <img id="bannerPreview" src="">
+      </div>
+      <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan Profil</button>
+      <span id="profileSaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
+    </form>
+  </div>
+
+  <!-- DAFTAR LINK -->
+  <div class="panel">
+    <h2><i class="bi bi-link-45deg"></i> Daftar Link</h2>
+    <div id="linksList">Memuat...</div>
+  </div>
+
+  <!-- TAMBAH / EDIT LINK -->
+  <div class="panel">
+    <h2 id="formTitle"><i class="bi bi-plus-circle"></i> Tambah Link Baru</h2>
+    <form id="linkForm">
+      <input type="hidden" id="linkId">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Kategori (contoh: WhatsApp Admin, Media Sosial)</label>
+          <input type="text" class="form-control" id="linkCategory" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Tipe Tampilan</label>
+          <select class="form-select" id="linkType">
+            <option value="button">Tombol biasa</option>
+            <option value="card">Kartu (dengan deskripsi & gambar)</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Label / Judul</label>
+          <input type="text" class="form-control" id="linkLabel" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">URL Tujuan</label>
+          <input type="url" class="form-control" id="linkUrl" required placeholder="https://...">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Icon (nama Bootstrap Icons, contoh: bi-whatsapp)</label>
+          <input type="text" class="form-control" id="linkIcon" placeholder="bi-whatsapp">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Warna Tombol</label>
+          <select class="form-select" id="linkStyle">
+            <option value="btn-primary">Biru (Primary)</option>
+            <option value="btn-outline-info">Outline Info</option>
+            <option value="btn-outline-warning">Outline Kuning</option>
+            <option value="btn-success">Hijau</option>
+            <option value="btn-danger">Merah</option>
+          </select>
+        </div>
+        <div class="col-12" id="cardExtraFields" style="display:none;">
+          <label class="form-label">Deskripsi (khusus tipe Kartu)</label>
+          <textarea class="form-control mb-2" id="linkDescription" rows="2"></textarea>
+          <label class="form-label">URL Gambar Kartu (khusus tipe Kartu, upload dulu ke imgBB/Imgur)</label>
+          <input type="url" class="form-control" id="linkImageUrl" placeholder="https://...">
+          <img id="linkImagePreview" src="">
+        </div>
+      </div>
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan Link</button>
+        <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="border-radius:10px; display:none;">Batal Edit</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script>
+auth.onAuthStateChanged((user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    loadProfile();
+    loadLinks();
+  }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  auth.signOut().then(() => (window.location.href = "login.html"));
+});
+
+// ---- PROFIL ----
+async function loadProfile() {
+  const doc = await db.collection("site").doc("profile").get();
+  if (doc.exists) {
+    const data = doc.data();
+    document.getElementById("welcomeText").value = data.welcomeText || "";
+    if (data.bannerImage) {
+      document.getElementById("bannerUrl").value = data.bannerImage;
+      const prev = document.getElementById("bannerPreview");
+      prev.src = data.bannerImage;
+      prev.style.display = "block";
+    }
+  }
+}
+
+document.getElementById("bannerUrl").addEventListener("input", (e) => {
+  const url = e.target.value;
+  const prev = document.getElementById("bannerPreview");
+  if (url) {
+    prev.src = url;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+});
+
+document.getElementById("profileForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const welcomeText = document.getElementById("welcomeText").value;
+  const bannerImage = document.getElementById("bannerUrl").value;
+
+  await db.collection("site").doc("profile").set({ welcomeText, bannerImage }, { merge: true });
+  const saved = document.getElementById("profileSaved");
+  saved.style.display = "inline";
+  setTimeout(() => (saved.style.display = "none"), 2000);
+});
+
+// ---- LINKS ----
+function toggleCardFields() {
+  const isCard = document.getElementById("linkType").value === "card";
+  document.getElementById("cardExtraFields").style.display = isCard ? "block" : "none";
+}
+document.getElementById("linkType").addEventListener("change", toggleCardFields);
+
+async function loadLinks() {
+  const listEl = document.getElementById("linksList");
+  const snap = await db.collection("links").orderBy("order", "asc").get();
+  if (snap.empty) {
+    listEl.innerHTML = '<p class="text-muted">Belum ada link. Tambahkan lewat form di bawah.</p>';
+    return;
+  }
+  listEl.innerHTML = "";
+  snap.forEach((docSnap) => {
+    const link = docSnap.data();
+    const el = document.createElement("div");
+    el.className = "link-item";
+    el.innerHTML = `
+      <div class="info">
+        <span class="badge badge-cat">${link.category}</span>
+        <i class="bi ${link.icon || ""}"></i>
+        <strong>${link.label}</strong> <span class="text-muted">(${link.type})</span><br>
+        <small class="text-muted">${link.url}</small>
+      </div>
+      <div>
+        <button class="btn btn-sm btn-outline-info me-1 editBtn">Edit</button>
+        <button class="btn btn-sm btn-outline-danger deleteBtn">Hapus</button>
+      </div>`;
+    el.querySelector(".editBtn").addEventListener("click", () => editLink(docSnap.id, link));
+    el.querySelector(".deleteBtn").addEventListener("click", () => deleteLink(docSnap.id));
+    listEl.appendChild(el);
+  });
+}
+
+function editLink(id, link) {
+  document.getElementById("linkId").value = id;
+  document.getElementById("linkCategory").value = link.category || "";
+  document.getElementById("linkType").value = link.type || "button";
+  document.getElementById("linkLabel").value = link.label || "";
+  document.getElementById("linkUrl").value = link.url || "";
+  document.getElementById("linkIcon").value = link.icon || "";
+  document.getElementById("linkStyle").value = link.style || "btn-primary";
+  document.getElementById("linkDescription").value = link.description || "";
+  document.getElementById("linkImageUrl").value = link.image || "";
+  const prev = document.getElementById("linkImagePreview");
+  if (link.image) {
+    prev.src = link.image;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+  toggleCardFields();
+  document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square"></i> Edit Link';
+  document.getElementById("cancelEditBtn").style.display = "inline-block";
+  document.getElementById("linkForm").scrollIntoView({ behavior: "smooth" });
+}
+
+document.getElementById("cancelEditBtn").addEventListener("click", resetLinkForm);
+
+function resetLinkForm() {
+  document.getElementById("linkForm").reset();
+  document.getElementById("linkId").value = "";
+  document.getElementById("linkImagePreview").style.display = "none";
+  document.getElementById("formTitle").innerHTML = '<i class="bi bi-plus-circle"></i> Tambah Link Baru';
+  document.getElementById("cancelEditBtn").style.display = "none";
+  toggleCardFields();
+}
+
+document.getElementById("linkImageUrl").addEventListener("input", (e) => {
+  const url = e.target.value;
+  const prev = document.getElementById("linkImagePreview");
+  if (url) {
+    prev.src = url;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+});
+
+document.getElementById("linkForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("linkId").value;
+  const type = document.getElementById("linkType").value;
+  const image = document.getElementById("linkImageUrl").value;
+
+  const data = {
+    category: document.getElementById("linkCategory").value,
+    type,
+    label: document.getElementById("linkLabel").value,
+    url: document.getElementById("linkUrl").value,
+    icon: document.getElementById("linkIcon").value,
+    style: document.getElementById("linkStyle").value,
+    description: type === "card" ? document.getElementById("linkDescription").value : "",
+    image: type === "card" ? image : ""
+  };
+
+  if (id) {
+    await db.collection("links").doc(id).update(data);
+  } else {
+    const countSnap = await db.collection("links").get();
+    data.order = countSnap.size + 1;
+    await db.collection("links").add(data);
+  }
+
+  resetLinkForm();
+  loadLinks();
+});
+
+async function deleteLink(id) {
+  if (confirm("Yakin ingin menghapus link ini?")) {
+    await db.collection("links").doc(id).delete();
+    loadLinks();
+  }
+}
+</script>
+</body>
+</html>
