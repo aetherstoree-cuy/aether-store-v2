@@ -175,9 +175,8 @@
                 <label class="form-label">Kategori</label>
                 <select class="form-select" id="linkCategorySelect">
                   <option value="">— Pilih kategori —</option>
-                  <option value="__new__">+ Tambah kategori baru...</option>
                 </select>
-                <input type="text" class="form-control mt-2" id="linkCategoryNew" placeholder="Nama kategori baru, contoh: WhatsApp Admin" style="display:none;">
+                <div class="form-text">Belum ada kategori yang cocok? Tambahkan dulu lewat panel "Kelola Kategori".</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Tipe Tampilan</label>
@@ -449,35 +448,8 @@ function populateCategoryDropdown(categories, selected) {
     opt.textContent = cat;
     select.appendChild(opt);
   });
-  const newOpt = document.createElement("option");
-  newOpt.value = "__new__";
-  newOpt.textContent = "+ Tambah kategori baru...";
-  select.appendChild(newOpt);
-
-  const newInput = document.getElementById("linkCategoryNew");
-  if (selected && categories.includes(selected)) {
-    select.value = selected;
-    newInput.style.display = "none";
-  } else if (selected) {
-    select.value = "__new__";
-    newInput.value = selected;
-    newInput.style.display = "block";
-  } else {
-    select.value = categories.length ? "" : "__new__";
-    newInput.style.display = categories.length ? "none" : "block";
-  }
+  select.value = selected && categories.includes(selected) ? selected : "";
 }
-
-document.getElementById("linkCategorySelect").addEventListener("change", (e) => {
-  const newInput = document.getElementById("linkCategoryNew");
-  if (e.target.value === "__new__") {
-    newInput.style.display = "block";
-    newInput.value = "";
-    newInput.focus();
-  } else {
-    newInput.style.display = "none";
-  }
-});
 
 document.getElementById("linkColorPicker").addEventListener("input", (e) => {
   document.getElementById("linkColor").value = e.target.value;
@@ -546,10 +518,7 @@ async function moveLink(docs, index, direction) {
 
 function editLink(id, link) {
   document.getElementById("linkId").value = id;
-  const existingCategories = [...document.getElementById("linkCategorySelect").options]
-    .map((o) => o.value)
-    .filter((v) => v && v !== "__new__");
-  populateCategoryDropdown(existingCategories, link.category);
+  populateCategoryDropdown(cachedCategories.map((c) => c.name), link.category);
   document.getElementById("linkType").value = link.type || "button";
   document.getElementById("linkLabel").value = link.label || "";
   document.getElementById("linkUrl").value = link.url || "";
@@ -576,10 +545,7 @@ function editLink(id, link) {
 function resetLinkForm() {
   document.getElementById("linkForm").reset();
   document.getElementById("linkId").value = "";
-  const existingCategories = [...document.getElementById("linkCategorySelect").options]
-    .map((o) => o.value)
-    .filter((v) => v && v !== "__new__");
-  populateCategoryDropdown(existingCategories, "");
+  populateCategoryDropdown(cachedCategories.map((c) => c.name), "");
   document.getElementById("linkImagePreview").style.display = "none";
   document.getElementById("formTitle").innerHTML = '<i class="bi bi-plus-circle"></i> Tambah Link Baru';
   toggleCardFields();
@@ -602,18 +568,11 @@ document.getElementById("linkForm").addEventListener("submit", async (e) => {
   const type = document.getElementById("linkType").value;
   const image = document.getElementById("linkImageUrl").value;
 
-  const categorySelectVal = document.getElementById("linkCategorySelect").value;
-  const category = categorySelectVal === "__new__"
-    ? document.getElementById("linkCategoryNew").value.trim()
-    : categorySelectVal;
+  const category = document.getElementById("linkCategorySelect").value;
 
   if (!category) {
-    alert("Pilih kategori yang sudah ada, atau ketik nama kategori baru.");
+    alert('Pilih kategori terlebih dahulu. Kalau belum ada yang cocok, tambahkan dulu lewat panel "Kelola Kategori".');
     return;
-  }
-
-  if (categorySelectVal === "__new__") {
-    await addCategory(category);
   }
 
   const data = {
