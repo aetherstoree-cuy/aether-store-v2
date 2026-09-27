@@ -95,7 +95,7 @@ function renderCard(link) {
 
 function renderButton(link) {
   const color = link.color || "#0d6efd";
-  const btn = buttonClassAndStyle(color, link.fillStyle, "margin-right: 10px; margin-left: 10px; border-radius: 10px; margin-bottom: 8px; display:inline-block;");
+  const btn = buttonClassAndStyle(color, link.fillStyle, "margin-right: 10px; margin-left: 10px; border-radius: 10px; display:inline-block;");
   return `
   <a class="${btn.cls}" type="button" href="${link.url}" target="_blank" rel="noopener" style="${btn.style}">
     <i class="bi ${link.icon || ""}" style="margin-right:5px;"></i>${link.label}
@@ -170,11 +170,11 @@ async function loadSiteContent() {
     const buttonItems = items.filter((i) => i.type !== "card");
 
     if (cardItems.length) {
-      html += `<hr>` + cardItems.map(renderCard).join("") + `<br>`;
+      html += `` + cardItems.map(renderCard).join("") + `<br>`;
     }
     if (buttonItems.length) {
       html += `<div class="title text-center">${cat.toUpperCase()}</div>`;
-      html += `<div class="isi d-grid gap-2" style="margin-bottom:10px;">${buttonItems.map(renderButton).join("")}</div><br>`;
+      html += `<div class="isi d-grid gap-2">${buttonItems.map(renderButton).join("")}</div><br>`;
     }
   });
 
