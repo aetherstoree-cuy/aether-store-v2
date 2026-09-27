@@ -73,7 +73,6 @@ function buttonClassAndStyle(color, fillStyle, extraStyle) {
 
 function renderCard(link) {
   const color = link.color || "#0d6efd";
-  const badgeStyle = `background-color:${color}; color:#fff;`;
   const cta = buttonClassAndStyle(color, link.fillStyle, "border-radius: 20px;");
   const title = link.cardTitle || link.label;
   const buttonText = link.buttonText || "Buka Sekarang";
@@ -81,7 +80,7 @@ function renderCard(link) {
   <div class="card" style="width: 90%; margin: 0 auto 15px auto; background-color: #393a3f; color: #F8F5F0; border: 1px solid #EEEDED; border-radius: 25px;">
     ${link.image ? `<img src="${link.image}" class="card-img-top" alt="${title}" style="border-radius: 25px">` : ""}
     <div>
-      <span class="badge rounded-pill" style="margin-left: 12px; margin-top: 10px; ${badgeStyle}">
+      <span class="badge rounded-pill bg-primary" style="margin-left: 12px; margin-top: 10px;">
         <i class="bi ${link.icon || ""}"></i> ${link.label}
       </span>
     </div>
