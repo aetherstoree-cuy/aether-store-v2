@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/img/logo.png">
+<link rel="stylesheet" href="/css/style.css">
+<title>Dashboard Admin - Aether Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+  body { background:#3b3b3b; color:#fff; font-family:'Poppins',sans-serif; padding-bottom:60px; margin:0; overflow-x:hidden;}
+  .navbar-admin { background:#1f1f1f; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #3bb2f6; flex-wrap:wrap; gap:.5rem;}
+  .navbar-admin h1 { font-family:'Lilita One',sans-serif; font-size:1.2rem; color:#3bb2f6; margin:0;}
+  .container-admin { max-width:900px; margin:2rem auto; padding:0 1rem;}
+  .panel { background:#2a2a2a; border:1px solid #444; border-radius:15px; padding:1.5rem; margin-bottom:1.5rem;}
+  .panel h2 { font-size:1.1rem; color:#3bb2f6; margin-bottom:1rem;}
+  .form-control, .form-select { background:#1f1f1f; color:#fff; border:1px solid #444;}
+  .form-control:focus, .form-select:focus { background:#1f1f1f; color:#fff; border-color:#3bb2f6; box-shadow:none;}
+  .form-label { font-size:.9rem; color:#ccc;}
+  .link-item { background:#1f1f1f; border:1px solid #444; border-radius:10px; padding:.8rem 1rem; margin-bottom:.6rem; display:flex; justify-content:space-between; align-items:center; gap:.5rem; flex-wrap:wrap;}
+  .link-item .info { font-size:.9rem; min-width:0; flex:1 1 260px; overflow-wrap:break-word; word-break:break-word;}
+  .link-item .info small { overflow-wrap:break-word; word-break:break-all; display:inline-block; max-width:100%;}
+  .badge-cat { background:#3bb2f6; color:#111;}
+  .category-chip { background:#1f1f1f; border:1px solid #444; border-radius:20px; padding:.35rem .75rem; font-size:.85rem; display:inline-flex; align-items:center; gap:.4rem;}
+  .category-chip button { background:none; border:none; color:#dc3545; padding:0; line-height:1; display:flex; align-items:center;}
+  #bannerPreview, #linkImagePreview { max-width:100%; border-radius:10px; margin-top:.5rem; display:none;}
+  #linkImagePreview { max-width:200px; }
+  .accordion-item { background:#2a2a2a; border:1px solid #444; border-radius:15px !important; overflow:hidden; margin-bottom:1rem;}
+  .accordion-button { background:#2a2a2a; color:#fff; box-shadow:none;}
+  .accordion-button:not(.collapsed) { background:#1f1f1f; color:#3bb2f6; box-shadow:none;}
+  .accordion-button:focus { box-shadow:none; border-color:#444;}
+  .accordion-button::after { filter:invert(1);}
+  .accordion-body { background:#2a2a2a;}
+</style>
+</head>
+<body>
+
+<!--NAVBAR-->
+  <nav class="navbar bg-dark border-body fixed-top" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img id="navbarLogo" src="/img/logo.png" alt="Logo" width="80" class="d-inline-block align-text-top">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/"><i class="bi bi-house" style="margin-right: 5px;"></i>Beranda</a>
+        </li><br>
+        <li class="nav-item">
+         <button id="logoutBtn" class="btn btn-danger btn-sm" style="border-radius:8px;"><i class="bi bi-box-arrow-left" style="margin-right: 6px;"></i>Logout</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!--AWAL-->
+  <div class="panel" style="margin-top: 100px;">
+<div class="welcome">
+ <h5><i class="bi bi-bookmark" style="margin-right: 5px"></i>WELCOME BACK!</span></h3>
+</div>
+<p style="margin-left: 27px;">Hello! Edit link kamu disini!</p>
+<div style="text-align: center;">
+<button type="button" class="btn btn-outline-warning btn-lg" style="margin-right: 5px;" disabled><i class="bi bi-pen"></i></button>
+<button type="button" class="btn btn-outline-warning btn-lg" style="margin-right: 5px;" disabled><i class="bi bi-pen"></i></button>
+<button type="button" class="btn btn-outline-warning btn-lg" style="margin-right: 5px;" disabled><i class="bi bi-pen"></i></button>
+  </div>
+</div>
+  
+
+  <!-- PROFIL -->
+  <div class="panel">
+    <h2><i class="bi bi-person-circle"></i> Halaman</h2>
+    <form id="profileForm">
+      <div class="mb-3">
+        <label class="form-label">Logo (navbar & footer)</label>
+        <input type="url" class="form-control" id="logoUrl" placeholder="https://...">
+        <img id="logoPreview" src="" style="max-width:150px; border-radius:8px; margin-top:.5rem; display:none;">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Teks Header (Bisa pakai HTML sederhana)</label>
+        <textarea class="form-control" id="welcomeText" rows="2"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Banner (Bisa lebih dari 1)</label>
+        <div id="bannerUrlList"></div>
+        <button type="button" class="btn btn-sm btn-outline-light mt-1" id="addBannerUrlBtn" style="border-radius:8px;">
+          <i class="bi bi-plus-circle"></i> Tambah Gambar
+        </button>
+      </div>
+      <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan</button>
+      <span id="profileSaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
+    </form>
+  </div>
+
+  <!-- KELOLA KATEGORI -->
+  <div class="panel">
+    <h2><i class="bi bi-tags"></i> Kelola Kategori</h2>
+    <div id="categoryList" class="d-flex flex-wrap gap-2 mb-3">Memuat...</div>
+    <form id="categoryForm" class="d-flex gap-2">
+      <input type="text" class="form-control" id="newCategoryInput">
+      <button type="submit" class="btn btn-primary" style="border-radius:10px; white-space:nowrap;">
+        <i class="bi bi-plus-circle"></i> Tambah
+      </button>
+    </form>
+  </div>
+
+  <!-- DAFTAR LINK -->
+  <div class="panel">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <h2 class="mb-0"><i class="bi bi-link-45deg"></i> Daftar Link</h2>
+      <button type="button" class="btn btn-primary btn-sm" id="addLinkBtn" style="border-radius:8px;">
+        <i class="bi bi-plus-circle"></i> Tambah Link
+      </button>
+    </div>
+    <div id="linksList">Memuat...</div>
+  </div>
+
+  <!-- ACCORDION: HALAMAN LEGAL -->
+  <div class="accordion" id="legalAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrivacy">
+          <i class="bi bi-shield-lock me-2"></i> Privacy Policy
+        </button>
+      </h2>
+      <div id="collapsePrivacy" class="accordion-collapse collapse" data-bs-parent="#legalAccordion">
+        <div class="accordion-body">
+          <form id="privacyForm">
+            <div class="row g-2 mb-2">
+              <div class="col-md-4">
+                <label class="form-label">Icon (Bootstrap Icons, contoh: bi-shield-lock)</label>
+                <input type="text" class="form-control" id="privacyIcon" placeholder="bi-shield-lock">
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Judul Halaman</label>
+                <input type="text" class="form-control" id="privacyTitle">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Isi Halaman (boleh pakai HTML dasar: &lt;p&gt;, &lt;b&gt;, &lt;br&gt;, &lt;ul&gt;&lt;li&gt;)</label>
+              <textarea class="form-control" id="privacyContent" rows="14" style="font-family:monospace; font-size:.85rem;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan</button>
+            <span id="privacySaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTerms">
+          <i class="bi bi-file-earmark-text me-2"></i> Terms & Conditions
+        </button>
+      </h2>
+      <div id="collapseTerms" class="accordion-collapse collapse" data-bs-parent="#legalAccordion">
+        <div class="accordion-body">
+          <form id="termsForm">
+            <div class="row g-2 mb-2">
+              <div class="col-md-4">
+                <label class="form-label">Icon (Bootstrap Icons, contoh: bi-file-earmark-text)</label>
+                <input type="text" class="form-control" id="termsIcon" placeholder="bi-file-earmark-text">
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Judul Halaman</label>
+                <input type="text" class="form-control" id="termsTitle">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Isi Halaman (boleh pakai HTML dasar: &lt;p&gt;, &lt;b&gt;, &lt;br&gt;, &lt;ul&gt;&lt;li&gt;)</label>
+              <textarea class="form-control" id="termsContent" rows="18" style="font-family:monospace; font-size:.85rem;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="border-radius:10px;">Simpan</button>
+            <span id="termsSaved" class="text-success ms-2" style="display:none;">Tersimpan!</span>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TAMBAH / EDIT LINK -->
+  <div class="modal fade" id="linkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background:#2a2a2a; color:#fff; border:1px solid #444; border-radius:15px;">
+        <div class="modal-header" style="border-color:#444;">
+          <h5 class="modal-title" id="formTitle"><i class="bi bi-plus-circle"></i> Tambah Link Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <form id="linkForm">
+            <input type="hidden" id="linkId">
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Kategori</label>
+                <select class="form-select" id="linkCategorySelect">
+                  <option value="">— Pilih kategori —</option>
+                </select>
+                <p style="margin-top: 5px;">Tambahkan kategori di panel "Kelola Kategori".</p>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tipe Tampilan</label>
+                <select class="form-select" id="linkType">
+                  <option value="button">Tombol biasa</option>
+                  <option value="card">Card</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Label (Teks kecil di badge card)</label>
+                <input type="text" class="form-control" id="linkLabel" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">URL Link</label>
+                <input type="url" class="form-control" id="linkUrl" required placeholder="https://...">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Icon (Bootstrap Icons, contoh: bi-whatsapp)</label>
+                <input type="text" class="form-control" id="linkIcon" placeholder="bi-whatsapp">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Gaya Tombol</label>
+                <select class="form-select" id="linkFillStyle">
+                  <option value="fill">Solid</option>
+                  <option value="outline">Outline</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Warna (kode HEX)</label>
+                <div class="d-flex gap-2">
+                  <input type="color" class="form-control form-control-color" id="linkColorPicker" value="#0d6efd" style="width:3rem; padding:.2rem;">
+                  <input type="text" class="form-control" id="linkColor" value="#0d6efd" placeholder="#0d6efd">
+                </div>
+              </div>
+              <div class="col-12" id="cardExtraFields" style="display:none;">
+                <hr style="border-color:#444;">
+                <label class="form-label">Judul</label>
+                <input type="text" class="form-control mb-2" id="linkCardTitle">
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-control mb-2" id="linkDescription" rows="2"></textarea>
+                <label class="form-label">Teks Tombol CTA</label>
+                <input type="text" class="form-control mb-2" id="linkButtonText">
+                <label class="form-label">URL Gambar Card</label>
+                <input type="url" class="form-control" id="linkImageUrl" placeholder="https://...">
+                <img id="linkImagePreview" src="">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer" style="border-color:#444;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Batal</button>
+          <button type="submit" form="linkForm" class="btn btn-primary" style="border-radius:10px;">Simpan Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KONFIRMASI HAPUS -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background:#2a2a2a; color:#fff; border:1px solid #444; border-radius:15px;">
+        <div class="modal-body text-center py-4">
+          <div class="alert alert-danger d-flex flex-column align-items-center gap-2 mb-0" role="alert">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size:2rem;"></i>
+            <span id="deleteModalMessage">Yakin ingin menghapus link ini? Tindakan ini tidak bisa dibatalkan.</span>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-center" style="border-color:#444;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Batal</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn" style="border-radius:10px;">Ya, Hapus</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script>
+auth.onAuthStateChanged((user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    loadProfile();
+    loadCategories();
+    loadLinks();
+    loadLegalPageForm("privacy", "privacyIcon", "privacyTitle", "privacyContent");
+    loadLegalPageForm("terms", "termsIcon", "termsTitle", "termsContent");
+  }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  auth.signOut().then(() => (window.location.href = "login.html"));
+});
+
+// ---- PROFIL ----
+let bannerImages = [];
+
+function renderBannerUrlList() {
+  const wrap = document.getElementById("bannerUrlList");
+  wrap.innerHTML = "";
+  if (!bannerImages.length) {
+    wrap.innerHTML = '<p class="text-muted mb-1">Belum ada gambar banner.</p>';
+    return;
+  }
+  bannerImages.forEach((url, i) => {
+    const row = document.createElement("div");
+    row.className = "d-flex gap-2 align-items-start mb-2";
+    row.innerHTML = `
+      <div class="flex-grow-1">
+        <input type="url" class="form-control banner-url-input" placeholder="https://..." value="${url || ""}">
+        ${url ? `<img src="${url}" style="max-width:100%; border-radius:8px; margin-top:.4rem;">` : ""}
+      </div>
+      <button type="button" class="btn btn-outline-danger btn-sm removeBannerBtn" title="Hapus"><i class="bi bi-trash"></i></button>`;
+    row.querySelector(".banner-url-input").addEventListener("input", (e) => {
+      bannerImages[i] = e.target.value;
+      renderBannerUrlList();
+    });
+    row.querySelector(".removeBannerBtn").addEventListener("click", () => {
+      bannerImages.splice(i, 1);
+      renderBannerUrlList();
+    });
+    wrap.appendChild(row);
+  });
+}
+
+document.getElementById("addBannerUrlBtn").addEventListener("click", () => {
+  bannerImages.push("");
+  renderBannerUrlList();
+});
+
+async function loadProfile() {
+  const doc = await db.collection("site").doc("profile").get();
+  if (doc.exists) {
+    const data = doc.data();
+    document.getElementById("welcomeText").value = data.welcomeText || "";
+    document.getElementById("logoUrl").value = data.logoUrl || "";
+    if (data.logoUrl) {
+      const logoPrev = document.getElementById("logoPreview");
+      logoPrev.src = data.logoUrl;
+      logoPrev.style.display = "block";
+    }
+    bannerImages = data.bannerImages && data.bannerImages.length
+      ? [...data.bannerImages]
+      : data.bannerImage
+      ? [data.bannerImage]
+      : [];
+  } else {
+    bannerImages = [];
+  }
+  renderBannerUrlList();
+}
+
+document.getElementById("logoUrl").addEventListener("input", (e) => {
+  const url = e.target.value;
+  const prev = document.getElementById("logoPreview");
+  if (url) {
+    prev.src = url;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+});
+
+document.getElementById("profileForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const welcomeText = document.getElementById("welcomeText").value;
+  const logoUrl = document.getElementById("logoUrl").value;
+  const cleanedBanners = bannerImages.map((u) => u.trim()).filter(Boolean);
+
+  await db.collection("site").doc("profile").set(
+    { welcomeText, logoUrl, bannerImages: cleanedBanners, bannerImage: firebase.firestore.FieldValue.delete() },
+    { merge: true }
+  );
+  bannerImages = cleanedBanners;
+  renderBannerUrlList();
+  const saved = document.getElementById("profileSaved");
+  saved.style.display = "inline";
+  setTimeout(() => (saved.style.display = "none"), 2000);
+});
+
+// ---- LINKS ----
+const linkModal = new bootstrap.Modal(document.getElementById("linkModal"));
+const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+let pendingDeleteId = null;
+let pendingDeleteType = "link";
+
+document.getElementById("addLinkBtn").addEventListener("click", () => {
+  resetLinkForm();
+  linkModal.show();
+});
+
+document.getElementById("linkModal").addEventListener("hidden.bs.modal", resetLinkForm);
+
+document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+  if (!pendingDeleteId) return;
+  if (pendingDeleteType === "category") {
+    await db.collection("categories").doc(pendingDeleteId).delete();
+    pendingDeleteId = null;
+    deleteModal.hide();
+    loadCategories();
+  } else {
+    await db.collection("links").doc(pendingDeleteId).delete();
+    pendingDeleteId = null;
+    deleteModal.hide();
+    loadLinks();
+  }
+});
+
+let cachedCategories = [];
+
+async function loadCategories() {
+  const snap = await db.collection("categories").orderBy("name", "asc").get();
+  cachedCategories = snap.docs.map((d) => ({ id: d.id, name: d.data().name }));
+  renderCategoryList();
+  populateCategoryDropdown(cachedCategories.map((c) => c.name), "");
+}
+
+function renderCategoryList() {
+  const wrap = document.getElementById("categoryList");
+  if (!cachedCategories.length) {
+    wrap.innerHTML = '<p class="text-mb-0">Belum ada kategori. Silahkan tambahkan terlebih dahulu.</p>';
+    return;
+  }
+  wrap.innerHTML = "";
+  cachedCategories.forEach((cat) => {
+    const chip = document.createElement("span");
+    chip.className = "category-chip";
+    chip.innerHTML = `${cat.name} <button type="button" title="Hapus kategori"><i class="bi bi-x-circle-fill"></i></button>`;
+    chip.querySelector("button").addEventListener("click", () => deleteCategory(cat.id, cat.name));
+    wrap.appendChild(chip);
+  });
+}
+
+async function addCategory(name) {
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  const exists = cachedCategories.some((c) => c.name.toLowerCase() === trimmed.toLowerCase());
+  if (exists) return;
+  await db.collection("categories").add({ name: trimmed });
+  await loadCategories();
+}
+
+document.getElementById("categoryForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = document.getElementById("newCategoryInput");
+  await addCategory(input.value);
+  input.value = "";
+});
+
+function deleteCategory(id, name) {
+  pendingDeleteType = "category";
+  pendingDeleteId = id;
+  document.getElementById("deleteModalMessage").textContent =
+    `Yakin ingin menghapus kategori "${name}"? Link yang sudah memakai kategori ini tidak akan terhapus, hanya kategorinya tidak lagi muncul di daftar pilihan.`;
+  deleteModal.show();
+}
+
+function populateCategoryDropdown(categories, selected) {
+  const select = document.getElementById("linkCategorySelect");
+  select.innerHTML = '<option value="">— Pilih kategori —</option>';
+  categories.forEach((cat) => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    select.appendChild(opt);
+  });
+  select.value = selected && categories.includes(selected) ? selected : "";
+}
+
+document.getElementById("linkColorPicker").addEventListener("input", (e) => {
+  document.getElementById("linkColor").value = e.target.value;
+});
+document.getElementById("linkColor").addEventListener("input", (e) => {
+  if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+    document.getElementById("linkColorPicker").value = e.target.value;
+  }
+});
+
+function toggleCardFields() {
+  const isCard = document.getElementById("linkType").value === "card";
+  document.getElementById("cardExtraFields").style.display = isCard ? "block" : "none";
+}
+document.getElementById("linkType").addEventListener("change", toggleCardFields);
+
+async function loadLinks() {
+  const listEl = document.getElementById("linksList");
+  const snap = await db.collection("links").orderBy("order", "asc").get();
+  if (snap.empty) {
+    listEl.innerHTML = '<p>Belum ada link. Silahkan tambahkan link terlebih dahulu.</p>';
+    return;
+  }
+  listEl.innerHTML = "";
+  const docs = snap.docs;
+  docs.forEach((docSnap, index) => {
+    const link = docSnap.data();
+    const el = document.createElement("div");
+    el.className = "link-item";
+    el.innerHTML = `
+      <div class="info">
+        <span class="badge badge-cat"><i class="bi bi-tags" style="margin-right: 2px;"></i>${link.category}</span>
+        <span style="display:inline-block; width:14px; height:14px; border-radius:3px; background:${link.color || "#0d6efd"}; vertical-align:middle; margin-right:4px;"></span>
+        <i class="bi ${link.icon || ""}"></i>
+        <strong>${link.label}</strong> <span class="text">(${link.type})</span><br>
+        <small class="text-link" style="margin-top: 15px;">${link.url}</small>
+      </div>
+      <div>
+        <button class="btn btn-sm btn-outline-secondary me-1 upBtn" ${index === 0 ? "disabled" : ""} title="Naik"><i class="bi bi-arrow-up"></i></button>
+        <button class="btn btn-sm btn-outline-secondary me-1 downBtn" ${index === docs.length - 1 ? "disabled" : ""} title="Turun"><i class="bi bi-arrow-down"></i></button>
+        <button class="btn btn-sm btn-outline-info me-1 editBtn">Edit</button>
+        <button class="btn btn-sm btn-outline-danger deleteBtn">Hapus</button>
+      </div>`;
+    el.querySelector(".upBtn").addEventListener("click", () => moveLink(docs, index, -1));
+    el.querySelector(".downBtn").addEventListener("click", () => moveLink(docs, index, 1));
+    el.querySelector(".editBtn").addEventListener("click", () => editLink(docSnap.id, link));
+    el.querySelector(".deleteBtn").addEventListener("click", () => deleteLink(docSnap.id));
+    listEl.appendChild(el);
+  });
+}
+
+async function moveLink(docs, index, direction) {
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= docs.length) return;
+
+  const current = docs[index];
+  const target = docs[targetIndex];
+  const currentOrder = current.data().order;
+  const targetOrder = target.data().order;
+
+  await db.collection("links").doc(current.id).update({ order: targetOrder });
+  await db.collection("links").doc(target.id).update({ order: currentOrder });
+
+  loadLinks();
+}
+
+function editLink(id, link) {
+  document.getElementById("linkId").value = id;
+  populateCategoryDropdown(cachedCategories.map((c) => c.name), link.category);
+  document.getElementById("linkType").value = link.type || "button";
+  document.getElementById("linkLabel").value = link.label || "";
+  document.getElementById("linkUrl").value = link.url || "";
+  document.getElementById("linkIcon").value = link.icon || "";
+  document.getElementById("linkColor").value = link.color || "#0d6efd";
+  document.getElementById("linkColorPicker").value = link.color || "#0d6efd";
+  document.getElementById("linkFillStyle").value = link.fillStyle || "fill";
+  document.getElementById("linkCardTitle").value = link.cardTitle || "";
+  document.getElementById("linkButtonText").value = link.buttonText || "";
+  document.getElementById("linkDescription").value = link.description || "";
+  document.getElementById("linkImageUrl").value = link.image || "";
+  const prev = document.getElementById("linkImagePreview");
+  if (link.image) {
+    prev.src = link.image;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+  toggleCardFields();
+  document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square"></i> Edit Link';
+  linkModal.show();
+}
+
+function resetLinkForm() {
+  document.getElementById("linkForm").reset();
+  document.getElementById("linkId").value = "";
+  populateCategoryDropdown(cachedCategories.map((c) => c.name), "");
+  document.getElementById("linkImagePreview").style.display = "none";
+  document.getElementById("formTitle").innerHTML = '<i class="bi bi-plus-circle"></i> Tambah Link Baru';
+  toggleCardFields();
+}
+
+document.getElementById("linkImageUrl").addEventListener("input", (e) => {
+  const url = e.target.value;
+  const prev = document.getElementById("linkImagePreview");
+  if (url) {
+    prev.src = url;
+    prev.style.display = "block";
+  } else {
+    prev.style.display = "none";
+  }
+});
+
+document.getElementById("linkForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("linkId").value;
+  const type = document.getElementById("linkType").value;
+  const image = document.getElementById("linkImageUrl").value;
+
+  const category = document.getElementById("linkCategorySelect").value;
+
+  if (!category) {
+    alert('Pilih kategori terlebih dahulu. Kalau belum ada yang cocok, tambahkan dulu lewat panel "Kelola Kategori".');
+    return;
+  }
+
+  const data = {
+    category,
+    type,
+    label: document.getElementById("linkLabel").value,
+    url: document.getElementById("linkUrl").value,
+    icon: document.getElementById("linkIcon").value,
+    color: document.getElementById("linkColor").value || "#0d6efd",
+    fillStyle: document.getElementById("linkFillStyle").value || "fill",
+    cardTitle: type === "card" ? document.getElementById("linkCardTitle").value : "",
+    buttonText: type === "card" ? document.getElementById("linkButtonText").value : "",
+    description: type === "card" ? document.getElementById("linkDescription").value : "",
+    image: type === "card" ? image : ""
+  };
+
+  if (id) {
+    await db.collection("links").doc(id).update(data);
+  } else {
+    const countSnap = await db.collection("links").get();
+    data.order = countSnap.size + 1;
+    await db.collection("links").add(data);
+  }
+
+  resetLinkForm();
+  linkModal.hide();
+  loadLinks();
+});
+
+function deleteLink(id) {
+  pendingDeleteType = "link";
+  pendingDeleteId = id;
+  document.getElementById("deleteModalMessage").textContent =
+    "Yakin ingin menghapus link ini? Tindakan ini tidak bisa dibatalkan.";
+  deleteModal.show();
+}
+
+// ---- HALAMAN LEGAL (PRIVACY POLICY & TERMS & CONDITIONS) ----
+const DEFAULT_PRIVACY_CONTENT = `<p><b style="color:#3bb2f6;">Aether Store</b> berkomitmen untuk melindungi dan menghargai privasi informasi pribadi Anda. Dokumen ini menjelaskan bagaimana kami mengumpulkan dan menggunakan data Anda.</p>
+
+<p><b>1. Informasi yang Kami Kumpulkan</b><br>
+Kami mengumpulkan informasi yang Anda berikan saat melakukan transaksi, termasuk namun tidak terbatas pada nomor WhatsApp atau Email, data game (ID Game, Server, atau Username/Password sementara khusus layanan joki), serta bukti transfer pembayaran.</p>
+
+<p><b>2. Penggunaan Informasi</b><br>
+Informasi Anda hanya digunakan untuk memproses pesanan Top Up, Skin, atau Joki Game.</p>
+
+<p><b>3. Keamanan Data</b><br>
+Kami menjaga kerahasiaan data akun Anda dengan ketat. Khusus untuk layanan Joki Game, data login Anda akan langsung dihapus setelah proses joki dinyatakan selesai. Kami tidak akan pernah menjual atau membagikan data pribadi Anda kepada pihak ketiga tanpa izin.</p>`;
+
+const DEFAULT_TERMS_CONTENT = `<p>Selamat datang di <b style="color:#3bb2f6;">Aether Store</b>. Dengan melakukan transaksi di kami, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan di bawah ini.</p>
+
+<p><b>1. Layanan Kami</b></p>
+<ul>
+<li>Aether Store menyediakan layanan produk digital berupa Top Up Game, Skin Game, Joki Game, dan lainnya.</li>
+<li>Seluruh transaksi diproses secara digital. Tidak ada pengiriman barang fisik ke alamat pembeli.</li>
+</ul>
+
+<p><b>2. Pembayaran</b></p>
+<ul>
+<li>Kami menerima berbagai metode pembayaran resmi yang tersedia di Indonesia (Transfer Bank, E-Wallet, QRIS, Alfamart/Indomaret, dll.).</li>
+<li>Pembeli wajib memastikan nominal dan nomor tujuan pembayaran sudah benar sebelum melakukan pembayaran.</li>
+</ul>
+
+<p><b>3. Kebijakan Pengembalian Dana (Refund)</b></p>
+<ul>
+<li>Semua pembelian bersifat final. Pesanan yang telah berhasil diproses sesuai data yang Anda masukkan tidak dapat dibatalkan atau di-refund.</li>
+<li>Refund atau pengembalian dana hanya akan dilakukan apabila: (1) Adanya kesalahan dari pihak Admin kami, (2) Terjadi gangguan atau error yang menyebabkan pesanan tidak dapat diselesaikan.</li>
+</ul>
+
+<p><b>4. Tanggung Jawab Pengguna</b></p>
+<ul>
+<li>Kesalahan mengirimkan data (seperti ID Game, Server, atau data lainnya) oleh pembeli sepenuhnya menjadi tanggung jawab pembeli.</li>
+<li>Untuk layanan Joki Game, pembeli wajib mengamankan akun terlebih dahulu dan mengganti kata sandi setelah proses joki selesai demi keamanan.</li>
+</ul>`;
+
+async function loadLegalPageForm(pageId, iconFieldId, titleFieldId, contentFieldId) {
+  const defaults = pageId === "privacy"
+    ? { icon: "bi-shield-lock", title: "PRIVACY POLICY", contentHtml: DEFAULT_PRIVACY_CONTENT }
+    : { icon: "bi-file-earmark-text", title: "TERMS & CONDITIONS", contentHtml: DEFAULT_TERMS_CONTENT };
+
+  const doc = await db.collection("legalPages").doc(pageId).get();
+  const data = doc.exists ? doc.data() : {};
+  document.getElementById(iconFieldId).value = data.icon || defaults.icon;
+  document.getElementById(titleFieldId).value = data.title || defaults.title;
+  document.getElementById(contentFieldId).value = data.contentHtml || defaults.contentHtml;
+}
+
+function showSavedBadge(id) {
+  const el = document.getElementById(id);
+  el.style.display = "inline";
+  setTimeout(() => (el.style.display = "none"), 2000);
+}
+
+document.getElementById("privacyForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await db.collection("legalPages").doc("privacy").set(
+    {
+      icon: document.getElementById("privacyIcon").value,
+      title: document.getElementById("privacyTitle").value,
+      contentHtml: document.getElementById("privacyContent").value
+    },
+    { merge: true }
+  );
+  showSavedBadge("privacySaved");
+});
+
+document.getElementById("termsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await db.collection("legalPages").doc("terms").set(
+    {
+      icon: document.getElementById("termsIcon").value,
+      title: document.getElementById("termsTitle").value,
+      contentHtml: document.getElementById("termsContent").value
+    },
+    { merge: true }
+  );
+  showSavedBadge("termsSaved");
+});
+
+</script>
+</body>
+</html>
