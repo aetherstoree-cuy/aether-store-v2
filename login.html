@@ -46,7 +46,7 @@
 <script src="/js/firebase-config.js"></script>
 <script>
   auth.onAuthStateChanged((user) => {
-    if (user) window.location.href = "/admin/dashboard.html";
+    if (user) window.location.href = "dashboard.html";
   });
 
   document.getElementById("loginForm").addEventListener("submit", async (e) => {
